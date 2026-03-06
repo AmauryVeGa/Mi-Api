@@ -12,6 +12,17 @@ CREATE TABLE IF NOT EXISTS usuarios (
 )
 """)
 
+cursor.execute("""
+CREATE TABLE historial_conversiones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    moneda_origen TEXT,
+    moneda_destino TEXT,
+    cantidad REAL,
+    resultado REAL,
+    fecha TEXT
+)
+""")
+
 conexion.commit()
 conexion.close()
 
