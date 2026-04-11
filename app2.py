@@ -4,6 +4,7 @@ import bcrypt
 import jwt
 from datetime import datetime, timezone, timedelta
 from config import Config
+import logging
 
 app = Flask(__name__)
 
@@ -13,6 +14,7 @@ def get_db_connection():
     conexion.row_factory = sqlite3.Row
     return conexion
 
+logging.basicConfig(filename='LOGGINGS.log',level=logging.DEBUG)
 
 # =========================
 # REGISTRO DE USUARIO
@@ -25,10 +27,12 @@ def registro():
     email = data.get('email')
     password = data.get('password')
 
-    if not email or not password:
+    if not email or not password:        
+        logging.error('Registro fallido: email o password faltante')
         return jsonify({"error": "Email y contraseña son obligatorios"}), 400
 
     if len(password) < 8:
+        logging.error('Registro fallido: password incompleta')
         return jsonify({"error": "La contraseña debe tener mínimo 8 caracteres"}), 400
 
     conexion = get_db_connection()
@@ -40,6 +44,7 @@ def registro():
 
     if usuario_existente:
         conexion.close()
+        logging.warning('Registro fallido: usuario ya existe')
         return jsonify({"error": "El usuario ya existe"}), 409
 
     # Hash bcrypt
@@ -55,7 +60,8 @@ def registro():
 
     conexion.commit()
     conexion.close()
-
+    
+    logging.info('Usuario registrado correctamente')
     return jsonify({"message": "Usuario registrado correctamente"}), 201
 
 
@@ -71,9 +77,11 @@ def actualizar_password():
     nueva_password = data.get('password')
 
     if not email or not nueva_password:
+        logging.error('Cambio de contraseña fallido: email y password faltante')
         return jsonify({"error": "Email y nueva contraseña son requeridos"}), 400
 
     if len(nueva_password) < 8:
+        logging.error('Cambio de contraseña fallido: password incompleta')
         return jsonify({"error": "La contraseña debe tener mínimo 8 caracteres"}), 400
 
     conexion = get_db_connection()
@@ -84,6 +92,7 @@ def actualizar_password():
 
     if not usuario:
         conexion.close()
+        logging.error('Cambio de contraseña fallido: usuario no encontrado')
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     # Hash nueva contraseña
@@ -99,6 +108,7 @@ def actualizar_password():
     conexion.commit()
     conexion.close()
 
+    logging.info('Contraseña actualizada correctamente')
     return jsonify({"message": "Contraseña actualizada correctamente"}), 200
 
 
@@ -114,12 +124,14 @@ def actualizar_role():
     nuevo_role = data.get('role')
 
     if not email or not nuevo_role:
+        logging.error('Cambio de rol fallido: email o password faltante')
         return jsonify({"error": "Email y rol son obligatorios"}), 400
 
     # Validar roles permitidos
     roles_validos = ["cliente", "admin"]
 
     if nuevo_role not in roles_validos:
+        logging.warning('Cambio de rol fallido: rol inválido')
         return jsonify({"error": "Rol inválido"}), 400
 
     conexion = get_db_connection()
@@ -130,6 +142,7 @@ def actualizar_role():
 
     if not usuario:
         conexion.close()
+        logging.error('Cambio de rol fallido: Usuario no encontrado')
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     cursor.execute(
@@ -140,6 +153,7 @@ def actualizar_role():
     conexion.commit()
     conexion.close()
 
+    logging.info('Rol actualizado correctamente')
     return jsonify({"message": "Rol actualizado correctamente"}), 200
 
 # =========================
@@ -154,6 +168,7 @@ def login():
     password = data.get('password')
 
     if not email or not password:
+        logging.error('Login fallido: email o password faltante')
         return jsonify({"error": "Email y contraseña son obligatorios"}), 400
 
     conexion = get_db_connection()
@@ -165,6 +180,7 @@ def login():
     conexion.close()
 
     if not usuario:
+        logging.warning('Login fallido: credenciales incorrectas')
         return jsonify({"error": "Credenciales incorrectas"}), 401
 
     password_guardado = usuario["password"]
@@ -180,12 +196,14 @@ def login():
 
         token = jwt.encode(payload,Config.SECRET_KEY,algorithm=Config.JWT_ALGORITHM)
 
+        logging.info('Login exitoso')
         return jsonify({
             "message": "Login exitoso",
             "token": token
         }), 200
 
     else:
+        logging.warning('Login fallido: credenciales incorrectas')
         return jsonify({"error": "Credenciales incorrectas"}), 401
     
 # =========================
@@ -199,6 +217,7 @@ def eliminar_usuario():
     email = data.get('email')
 
     if not email:
+        logging.error('Eliminar usuario fallido: email faltante')
         return jsonify({"error": "El email es obligatorio"}), 400
 
     conexion = get_db_connection()
@@ -210,6 +229,7 @@ def eliminar_usuario():
 
     if not usuario:
         conexion.close()
+        logging.error('Eliminar usuario fallido: usuario no encontrado')
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     # Eliminar usuario
@@ -217,6 +237,7 @@ def eliminar_usuario():
     conexion.commit()
     conexion.close()
 
+    logging.info('Usuario eliminado correctamente')
     return jsonify({"message": "Usuario eliminado correctamente"}), 200
 
 # =========================
@@ -232,15 +253,18 @@ def convertir_moneda():
     cantidad = data.get("amount")
 
     if not moneda_origen or not moneda_destino or not cantidad:
+        logging.error('Convertir moneda fallido: datos faltantes')
         return jsonify({"error": "from, to y amount son obligatorios"}), 400
 
     try:
         cantidad = float(cantidad)
     except:
+        logging.error('Convertir moneda fallido: cantidad invalida')
         return jsonify({"error": "La cantidad debe ser un número"}), 400
 
     # No permitir 0 ni negativos
     if cantidad <= 0:
+        logging.error('Convertir moneda fallido: cantidad invalida')
         return jsonify({"error": "La cantidad debe ser mayor a 0"}), 400
 
     # Tasas base respecto al USD
@@ -251,6 +275,7 @@ def convertir_moneda():
     }
 
     if moneda_origen not in tasas or moneda_destino not in tasas:
+        logging.warning('Convertir moneda fallido: moneda no soportada')
         return jsonify({"error": "Moneda no soportada"}), 400
 
     # convertir primero a USD
@@ -280,6 +305,7 @@ def convertir_moneda():
     conexion.commit()
     conexion.close()
 
+    logging.info('Moneda convertida correctamente')
     return jsonify({
         "origen": moneda_origen,
         "destino": moneda_destino,
@@ -314,6 +340,7 @@ def historial_conversiones():
             "fecha": fila["fecha"]
         })
 
+    logging.info('Historial consultado')
     return jsonify(lista), 200
 
 if __name__ == '__main__':

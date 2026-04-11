@@ -1,0 +1,46 @@
+ERROR:root:Registro fallido: email o password faltante
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 02:58:00] "[31m[1mPOST /registro HTTP/1.1[0m" 400 -
+ERROR:root:Registro fallido: password incompleta
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 02:58:52] "[31m[1mPOST /registro HTTP/1.1[0m" 400 -
+INFO:root:Usuario registrado correctamente
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 02:59:10] "[35m[1mPOST /registro HTTP/1.1[0m" 201 -
+WARNING:root:Registro fallido: usuario ya existe
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 02:59:24] "[31m[1mPOST /registro HTTP/1.1[0m" 409 -
+ERROR:root:Cambio de contrase�a fallido usuario y contrase�a requeridos
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 02:59:56] "[31m[1mPUT /actualizar_password HTTP/1.1[0m" 400 -
+ERROR:root:Cambio de contrase�a fallido contrase�a muy corta
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:00:32] "[31m[1mPUT /actualizar_password HTTP/1.1[0m" 400 -
+ERROR:root:Cambio de contrase�a fallido usuario no encontrado
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:01:07] "[33mPUT /actualizar_password HTTP/1.1[0m" 404 -
+INFO:root:Contrase�a actualizada correctamente
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:01:26] "PUT /actualizar_password HTTP/1.1" 200 -
+ERROR:root:Cambio de rol fallido: email o password faltante
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:09:46] "[31m[1mPUT /actualizar_role HTTP/1.1[0m" 400 -
+WARNING:root:Cambio de rol fallido: rol inv�lido
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:10:48] "[31m[1mPUT /actualizar_role HTTP/1.1[0m" 400 -
+ERROR:root:Cambio de rol fallido: Usuario no encontrado
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:11:43] "[33mPUT /actualizar_role HTTP/1.1[0m" 404 -
+INFO:root:Rol actualizado correctamente
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:11:47] "PUT /actualizar_role HTTP/1.1" 200 -
+ERROR:root:Login fallido: email o password faltante
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:25:21] "[31m[1mPOST /login HTTP/1.1[0m" 400 -
+WARNING:root:Login fallido: credenciales incorrectas
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:25:43] "[31m[1mPOST /login HTTP/1.1[0m" 401 -
+INFO:root:Login exitoso
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:25:51] "POST /login HTTP/1.1" 200 -
+ERROR:root:Eliminar usuario fallido: email faltante
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:27:47] "[31m[1mDELETE /eliminar_usuario HTTP/1.1[0m" 400 -
+ERROR:root:Eliminar usuario fallido: usuario no encontrado
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:28:01] "[33mDELETE /eliminar_usuario HTTP/1.1[0m" 404 -
+INFO:root:Usuario eliminado correctamente
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:28:14] "DELETE /eliminar_usuario HTTP/1.1" 200 -
+ERROR:root:Convertir moneda fallido: datos faltantes
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:39:40] "[31m[1mPOST /convertir HTTP/1.1[0m" 400 -
+ERROR:root:Convertir moneda fallido: cantidad invalida
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:40:16] "[31m[1mPOST /convertir HTTP/1.1[0m" 400 -
+WARNING:root:Convertir moneda fallido: moneda no soportada
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:42:13] "[31m[1mPOST /convertir HTTP/1.1[0m" 400 -
+INFO:root:Moneda convertida correctamente
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:43:14] "POST /convertir HTTP/1.1" 200 -
+INFO:root:Historial consultado
+INFO:werkzeug:127.0.0.1 - - [17/Mar/2026 03:46:34] "GET /historial_conversiones HTTP/1.1" 200 -
